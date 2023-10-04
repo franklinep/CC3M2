@@ -1,4 +1,4 @@
-w#include <bits/stdc++.h>
+#include <bits/stdc++.h>
 using namespace std;
 
 int const M = INT16_MAX;

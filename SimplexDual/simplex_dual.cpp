@@ -1,4 +1,4 @@
-w#include <bits/stdc++.h>
+#include <bits/stdc++.h>
 using namespace std;
 
 int const M = INT16_MAX;
@@ -12,48 +12,70 @@ void fillTable(int row, int col, double ** table){
     }
 }
 pair<int,int> indexPivot(int n, int row, int col, double ** table){
-	pair<int,int> index;
-	// * COLUMNA
-	// Buscamos el mayor negativo entre x1,x2,x3,xn
-	int last = row-1;
-	double max = 0;
-	for (int j = 0; j < n; ++j)
-	{
-		if(table[last][j] < max){
-			max = table[last][j];
-			index.second = j;
-		}
-	}
-	// * FILA
-	// El menor numero positivo al dividir (biq/aiq)
-	int j_b = col-1, j_pivot = index.second;
-	double min = INT_MAX;
-	for (int i = 0; i < row - 1; ++i)
-	{
-		if(table[i][j_pivot] > 0){
-			double r = table[i][j_b]/table[i][j_pivot];
-			if( r < min){
-				min = r;
-				index.first = i;
-			}
-		}
-	}
+    pair<int,int> index;
+    // * COLUMNA
+    // Buscamos el mayor negativo entre x1,x2,x3,xn
+    int last = row-1;
+    double max = 0;
+    for (int j = 0; j < n; ++j)
+    {
+        if(table[last][j] < max){
+            max = table[last][j];
+            index.second = j;
+        }
+    }
+    // * FILA
+    // El menor numero positivo al dividir (biq/aiq)
+    int j_b = col-1, j_pivot = index.second;
+    double min = INT_MAX;
+    for (int i = 0; i < row - 1; ++i)
+    {
+        if(table[i][j_pivot] > 0){
+            double r = table[i][j_b]/table[i][j_pivot];
+            if( r < min){
+                min = r;
+                index.first = i;
+            }
+        }
+    }
 
-	return index;
+    return index;
 }
 bool negativos(int n, int row, double ** &table){
-	int last = row-1;
-	for (int j = 0; j < n; ++j)
-		if(table[last][j] < 0) return true;
+    int last = row-1;
+    for (int j = 0; j < n; ++j)
+        if(table[last][j] < 0) return true;
 
-	return false;
+    return false;
+}
+void lineaSeparacion(int col){
+    for (int j = 0; j < col; j++) {
+        cout << setw(15) << setfill('-') << "";
+    }
+    cout << setfill(' ') << endl;
+}
+void headers(string h[], int col){
+    // impresion del encabezado
+    for (int i = 0; i < col; ++i) {
+        cout << setw(15) << right << h[i];
+    }
+    cout << endl;
 }
 void printTable(int row, int col, double ** table){
-    for(int i=0; i < row; i++){
-        for(int j=0;j<col;j++){
-            cout << right << setw(10) << table[i][j];
+    cout << endl;
+    // Imprimir línea de separación
+    lineaSeparacion(col);
+
+    // Imprimir datos de la tabla
+    for (int i = 0; i < row; i++) {
+        if(i == row-1){
+            lineaSeparacion(col);
         }
-        cout << "\n";
+        for (int j = 0; j < col; j++) {
+
+            cout << setw(15) << right << table[i][j];
+        }
+        cout << endl;
     }
 }
 void conversionTable(int row, int col, int ipiv, int jpiv,double **table){
@@ -70,35 +92,38 @@ void conversionTable(int row, int col, int ipiv, int jpiv,double **table){
     }
 }
 void simplexMethodMaximize(){
-	double pivot;
+    double pivot;
     int n, m;
-	cout << "Numero variables: "; cin >> n;
-	cout << "Numero de restricciones: "; cin >> m;
-	// 1. Rellenamos nuestra table[][]
-	int row = m + 1, col = m + n + 1;
-	auto** table = new double*[row];
+    cout << "Numero variables: "; cin >> n;
+    cout << "Numero de restricciones: "; cin >> m;
+    // 1. Rellenamos nuestra table[][]
+    int row = m + 1, col = m + n + 1;
+    auto** table = new double*[row];
     for (int i = 0; i < row; ++i) {
         table[i] = new double[col];
     }
     fillTable(row, col, table);
     printTable(row, col, table);
-	cout << "\nIngresando al bucle.....\n";
-	// 2. Bucle
-	do{
-		// Indentificamos nuestro pivote
+    // 2. Bucle
+    do{
+        cout << "\n******************************************************************************************+\n";
+        cout << "*******************************************************************************************\n";
+        // Indentificamos nuestro pivote
         pair<int,int> mypair = indexPivot(n, row, col, table);
-		int ipiv = mypair.first;
-		int jpiv = mypair.second;
-		pivot = table[ipiv][jpiv];
-        cout << "Nuestro pivote[" << ipiv << "]" << "[" << jpiv << "] = " << pivot << endl;
-		// Convertimos a la unidad el pivote mediante operaciones filas
-		for (int j = 0; j < col; ++j) table[ipiv][j] /= pivot;
-		// Convertimos 0's en la columna del pivote mediante operaciones fila
-		// OP : filaActual - razon*filaPivote
+        int ipiv = mypair.first;
+        int jpiv = mypair.second;
+        pivot = table[ipiv][jpiv];
+        cout << "Pivote actual = "<< pivot <<"\n\tfila = " << ipiv+1 << "\n\tcolumna = " << jpiv+1  << endl;
+        // Convertimos a la unidad el pivote mediante operaciones filas
+        cout << "\nPIVOTE UNIDAD ...............\n\n";
+        for (int j = 0; j < col; ++j) table[ipiv][j] /= pivot;
+        printTable(row, col, table);
+        // Convertimos 0's en la columna del pivote mediante operaciones fila
+        // OP : filaActual - razon*filaPivote
+        cout << "\nOPERACIONES FALAS ...............\n\n";
         conversionTable(row, col, ipiv, jpiv, table);
-		cout << "\nActualizando tabla ..........\n";
-		printTable(row, col, table);
-	}while(negativos(n, row, table));
+        printTable(row, col, table);
+    }while(negativos(n, row, table));
     // Liberar la memoria asignada
     for (int i = 0; i < row; ++i) {
         delete[] table[i];
@@ -160,16 +185,16 @@ void simplexMethodMinimize(){
     int row = m + 1, col = n + 2*m + 1;
     auto** table = new double*[row];
     for (int i = 0; i < row; ++i) {
-         table[i] = new double[col];
+        table[i] = new double[col];
     }
     // Array de los coeficientes Basicos
     auto *arr = new double[m];
     for (int i = 0; i < m; ++i) arr[i] = M;
     // Rellenamos nuestra table[][]
     fillTable(row, col, table);
-    table[0][0] = 1, table[0][1] = 4, table[0][2] = -1, table[0][3] = 1, table[0][4] = 0, table[0][5] = 0, table[0][6] = 3.5;
-    table[1][0] = 1, table[1][1] = 2, table[1][2] = 0, table[1][3] = 0, table[1][4] = -1, table[1][5] = 1, table[1][6] = 2.5;
-    table[2][0] = 3, table[2][1] = 8, table[2][2] = 0, table[2][3] = M, table[2][4] = 0, table[2][5] = M, table[2][6] = 0;
+    //table[0][0] = 1, table[0][1] = 4, table[0][2] = -1, table[0][3] = 1, table[0][4] = 0, table[0][5] = 0, table[0][6] = 3.5;
+    //table[1][0] = 1, table[1][1] = 2, table[1][2] = 0, table[1][3] = 0, table[1][4] = -1, table[1][5] = 1, table[1][6] = 2.5;
+    //table[2][0] = 3, table[2][1] = 8, table[2][2] = 0, table[2][3] = M, table[2][4] = 0, table[2][5] = M, table[2][6] = 0;
     /*
     table = [[1,4,-1,1,0,0,3.5],
              [1,2,0,0,-1,1,2.5],
@@ -193,11 +218,11 @@ void simplexMethodMinimize(){
         printTable(row, col, table);
     }while(negativos_2(row, col, table, arr));
     // Liberar la memoria asignada
-     for (int i = 0; i < row; ++i) {
-         delete[] table[i];
-     }
-     delete[] table;
-     delete[] arr;
+    for (int i = 0; i < row; ++i) {
+        delete[] table[i];
+    }
+    delete[] table;
+    delete[] arr;
 }
 /////////////////////////////MINIMIZACION MIXTA/////////////////////////////////
 pair<int,int> indexPivot_3(int row, int col, double **table, double *&arr){
@@ -299,9 +324,31 @@ void simplexMethod2Minimize(){
 }
 
 /** @author = Frankin
- * date 04/10/23
+ * date 18/09/23
  * */
 int main(){
-	int opt;
-    simplexMethodMaximize();
+    int opt;
+    cout << M;
+    do{
+        cout << "\n\t\tSimplex Method\n";
+        cout << "1.MAXIMIZAR >=\n2.MINIMIZAR <=\n3.MINIMIZAR MIXTO (<=, >=, =)\n4.Salir\nElige una opcion: ";
+        cin >> opt;
+        switch(opt){
+            case 1:
+                simplexMethodMaximize();
+                break;
+            case 2:
+                simplexMethodMinimize();
+                break;
+            case 3:
+                simplexMethod2Minimize();
+                break;
+            case 4:
+                cout << "Have a good day!\n";
+                system("cls");
+                break;
+            default:
+                cout << "Invalid option.\n";
+        }
+    }while(opt != 4);
 }
