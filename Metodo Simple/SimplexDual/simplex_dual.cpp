@@ -102,6 +102,7 @@ void simplexMethodMaximize(){
     for (int i = 0; i < row; ++i) {
         table[i] = new double[col];
     }
+
     fillTable(row, col, table);
     printTable(row, col, table);
     // 2. Bucle

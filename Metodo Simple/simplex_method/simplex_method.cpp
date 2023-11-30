@@ -167,15 +167,6 @@ void simplexMethodMinimize(){
     for (int i = 0; i < m; ++i) arr[i] = M;
     // Rellenamos nuestra table[][]
     fillTable(row, col, table);
-    //table[0][0] = 1, table[0][1] = 4, table[0][2] = -1, table[0][3] = 1, table[0][4] = 0, table[0][5] = 0, table[0][6] = 3.5;
-    //table[1][0] = 1, table[1][1] = 2, table[1][2] = 0, table[1][3] = 0, table[1][4] = -1, table[1][5] = 1, table[1][6] = 2.5;
-    //table[2][0] = 3, table[2][1] = 8, table[2][2] = 0, table[2][3] = M, table[2][4] = 0, table[2][5] = M, table[2][6] = 0;
-    /*
-    table = [[1,4,-1,1,0,0,3.5],
-             [1,2,0,0,-1,1,2.5],
-             [3,8,0,M,0,M,0]
-             ];
-             */
     printTable(row, col, table);
     do {
         // Indentificamos nuestro pivote
